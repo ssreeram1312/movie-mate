@@ -7,8 +7,7 @@ import WatchParty from './pages/WatchParty'
 import './App.css'
 
 import AddMedia from './pages/AddMedia'
-// MediaDetail will be added next
-// import MediaDetail from './pages/MediaDetail'
+import MediaDetail from './pages/MediaDetail'
 
 export default function App() {
   return (
@@ -17,8 +16,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="add" element={<AddMedia />} />
-          {/* Phase 2: MediaDetail coming next */}
-          {/* <Route path="media/:id" element={<MediaDetail />} /> */}
+          <Route path="media/:id" element={<MediaDetail />} />
           <Route path="stats" element={<Stats />} />
           <Route path="recommendations" element={<Recommendations />} />
           <Route path="watch-party" element={<WatchParty />} />

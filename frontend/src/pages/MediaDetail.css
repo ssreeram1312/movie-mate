@@ -1,0 +1,229 @@
+.detail-loading,
+.detail-error {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2xl) var(--space-xl);
+}
+
+.detail-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.detail-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-2xl);
+  align-items: start;
+}
+
+/* Left Column */
+.detail-poster-wrap {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--space-lg));
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+}
+
+.detail-poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-poster-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+}
+
+.detail-status-badge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  padding: 4px 12px;
+  font-size: var(--font-sm);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(8px);
+}
+
+/* Right Column */
+.detail-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.detail-title {
+  font-size: var(--font-4xl);
+  margin-bottom: var(--space-xs);
+  line-height: 1.1;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+}
+
+.detail-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail-genre {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.detail-director {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.detail-director strong {
+  color: var(--text-primary);
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.detail-section h3 {
+  font-size: var(--font-lg);
+  color: var(--text-primary);
+}
+
+.detail-overview {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+.detail-notes {
+  background: var(--bg-secondary);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--border-medium);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Interactive Cards */
+.detail-interactive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+
+.detail-card {
+  padding: var(--space-lg);
+}
+
+.detail-card h3 {
+  margin-bottom: var(--space-md);
+  font-size: var(--font-base);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-rating-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.detail-rating-hint {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+}
+
+/* Review */
+.detail-review-card {
+  margin-top: var(--space-md);
+}
+
+.detail-review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.detail-review-header h3 {
+  margin: 0;
+}
+
+.detail-review-content {
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+.detail-empty-text {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.detail-review-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .detail-layout {
+    grid-template-columns: 240px 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .detail-poster-wrap {
+    position: relative;
+    top: 0;
+    max-width: 240px;
+    margin: 0 auto;
+  }
+
+  .detail-title {
+    font-size: var(--font-3xl);
+    text-align: center;
+  }
+
+  .detail-meta {
+    justify-content: center;
+  }
+
+  .detail-director {
+    text-align: center;
+  }
+}
