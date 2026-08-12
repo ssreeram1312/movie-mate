@@ -1,0 +1,107 @@
+.recommendations-page .page-subtitle {
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+  margin-top: 4px;
+}
+
+.recs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.rec-card {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  border-top: 3px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.rec-card:hover {
+  border-top-color: var(--accent-primary);
+  transform: translateY(-4px);
+}
+
+.rec-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.rec-type-icon {
+  font-size: 20px;
+  color: var(--accent-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rec-title {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.rec-reason {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: var(--font-sm);
+  flex: 1;
+}
+
+.rec-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.rec-btn {
+  color: var(--accent-primary);
+}
+
+.recs-loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+.recs-card-skeleton {
+  height: 140px;
+  border-radius: var(--radius-lg);
+}
+
+.recs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-xl);
+  border: 1px dashed var(--border-medium);
+}
+
+.recs-empty-icon {
+  color: var(--accent-primary);
+  opacity: 0.5;
+  margin-bottom: var(--space-md);
+}
+
+.recs-empty h2 {
+  font-size: var(--font-xl);
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.recs-empty p {
+  color: var(--text-secondary);
+  max-width: 400px;
+}

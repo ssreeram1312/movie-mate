@@ -24,9 +24,11 @@ export const mediaAPI = {
 // ─── TMDB API ─────────────────────────────────────────────────────────────
 
 export const tmdbAPI = {
-  search: (q, type = 'multi') => api.get('/tmdb/search', { params: { q, type } }),
-  getDetails: (tmdb_id, type) => api.get(`/tmdb/details/${tmdb_id}`, { params: { type } }),
+  search: (query, type) => api.get(`/tmdb/search`, { params: { q: query, type } }),
+  getDetails: (id, type) => api.get(`/tmdb/details/${id}`, { params: { type } }),
 }
+
+
 
 // ─── AI API ───────────────────────────────────────────────────────────────
 

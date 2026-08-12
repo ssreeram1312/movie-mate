@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom'
 import {
   MdArrowBack, MdEdit, MdDelete, MdCheckCircle,
   MdPlayArrow, MdBookmark, MdAccessTime, MdCalendarToday,
-  MdMovie, MdTv
+  MdMovie, MdTv, MdAutoAwesome
 } from 'react-icons/md'
-import { mediaAPI } from '../services/api'
+import { mediaAPI, aiAPI } from '../services/api'
 import ProgressBar from '../components/ProgressBar/ProgressBar'
 import RatingStars from '../components/RatingStars/RatingStars'
 import './MediaDetail.css'
@@ -28,6 +28,7 @@ export default function MediaDetail() {
   // Review state
   const [review, setReview] = useState('')
   const [isEditingReview, setIsEditingReview] = useState(false)
+  const [generatingReview, setGeneratingReview] = useState(false)
 
   const fetchMedia = useCallback(async () => {
     setLoading(true)
@@ -96,6 +97,24 @@ export default function MediaDetail() {
     }
   }
 
+  const handleGenerateReview = async () => {
+    setGeneratingReview(true)
+    try {
+      const res = await aiAPI.generateReview({
+        title: media.title,
+        genre: media.genre,
+        rating: media.rating,
+        notes: media.notes
+      })
+      setReview(res.data.review)
+      setIsEditingReview(true)
+    } catch (err) {
+      alert(err.response?.data?.detail || 'Failed to generate review. Check Gemini API key.')
+    } finally {
+      setGeneratingReview(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="page-container detail-loading">
@@ -125,6 +144,16 @@ export default function MediaDetail() {
   const status = STATUS_CONFIG[media.status] || STATUS_CONFIG.wishlist
   const StatusIcon = status.icon
   const isTVShow = media.media_type === 'tv_show'
+
+  // Completion Estimate Logic
+  let completionEstimate = null
+  if (isTVShow && media.total_episodes && media.runtime_minutes && media.episodes_watched < media.total_episodes) {
+    const remainingEps = media.total_episodes - media.episodes_watched
+    const remainingMins = remainingEps * media.runtime_minutes
+    const hours = Math.floor(remainingMins / 60)
+    const mins = remainingMins % 60
+    completionEstimate = `~${hours}h ${mins > 0 ? `${mins}m` : ''} left`
+  }
 
   return (
     <div className="page-container media-detail animate-fade-in">
@@ -203,6 +232,11 @@ export default function MediaDetail() {
                   onUpdate={handleUpdateProgress}
                   loading={updating}
                 />
+                {completionEstimate && (
+                  <p style={{ marginTop: '8px', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>
+                    {completionEstimate}
+                  </p>
+                )}
               </div>
             )}
 
@@ -226,12 +260,23 @@ export default function MediaDetail() {
             <div className="detail-review-header">
               <h3>Your Review</h3>
               {!isEditingReview && (
-                <button
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => setIsEditingReview(true)}
-                >
-                  <MdEdit size={14} /> {media.review ? 'Edit' : 'Write Review'}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={handleGenerateReview}
+                    disabled={generatingReview}
+                    title="Generate review using AI based on your notes and rating"
+                  >
+                    <MdAutoAwesome style={{ color: 'var(--accent-primary)' }} size={14} /> 
+                    {generatingReview ? 'Generating...' : 'AI Review'}
+                  </button>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setIsEditingReview(true)}
+                  >
+                    <MdEdit size={14} /> {media.review ? 'Edit' : 'Write'}
+                  </button>
+                </div>
               )}
             </div>
 
