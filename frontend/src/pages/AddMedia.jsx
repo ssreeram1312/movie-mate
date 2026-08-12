@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import {
   MdSearch, MdClear, MdMovie, MdTv, MdArrowBack,
   MdAutoAwesome
@@ -61,14 +61,44 @@ const INITIAL_FORM = {
 export default function AddMedia() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const location = useLocation()
   const isEditMode = Boolean(id)
   
-  const [form, setForm] = useState(INITIAL_FORM)
-  const [searchQuery, setSearchQuery] = useState('')
+  // Get query param for initial search
+  const queryParams = new URLSearchParams(location.search)
+  const initialSearch = queryParams.get('q') || ''
+  const prefill = location.state?.prefill || null
+  
+  const getInitialForm = () => {
+    if (prefill) {
+      let type = 'movie'
+      const prefillType = (prefill.media_type || prefill.type || '').toLowerCase()
+      if (
+        prefillType.includes('tv') ||
+        prefillType.includes('show') ||
+        prefill.total_episodes ||
+        prefill.episodes_watched
+      ) {
+        type = 'tv_show'
+      }
+      return {
+        ...INITIAL_FORM,
+        ...prefill,
+        media_type: type,
+        genre: prefill.genre ? mapTmdbGenre(prefill.genre) : '',
+        platform: prefill.platform ? mapTmdbPlatform(prefill.platform) : '',
+      }
+    }
+    return INITIAL_FORM
+  }
+  
+  const [form, setForm] = useState(getInitialForm())
+  // Only trigger dropdown search if we didn't already get rich TMDB data from the Picks page
+  const [searchQuery, setSearchQuery] = useState(prefill?.tmdb_id ? '' : initialSearch)
   const [searchResults, setSearchResults] = useState([])
   const [searchLoading, setSearchLoading] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
-  const [tmdbSelected, setTmdbSelected] = useState(false)
+  const [tmdbSelected, setTmdbSelected] = useState(!!prefill?.tmdb_id)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const dropdownRef = useRef(null)
@@ -122,6 +152,47 @@ export default function AddMedia() {
     }
     fetchResults()
   }, [debouncedSearch])
+
+  // Auto-fill from TMDB when arriving from AI Picks without rich data
+  useEffect(() => {
+    if (!initialSearch || (prefill && prefill.tmdb_id)) return  // Already have rich data or no search
+    if (isEditMode) return
+    
+    const autoFill = async () => {
+      try {
+        const res = await tmdbAPI.search(initialSearch, 'multi')
+        const results = (res.data.results || []).filter(r => r.media_type === 'movie' || r.media_type === 'tv')
+        if (results.length > 0) {
+          // Auto-select the first matching result
+          const firstMatch = results[0]
+          const type = firstMatch.media_type || 'movie'
+          const detailRes = await tmdbAPI.getDetails(firstMatch.id, type)
+          const d = detailRes.data
+          
+          setForm({
+            ...INITIAL_FORM,
+            media_type: type === 'tv' ? 'tv_show' : 'movie',
+            title: d.title || '',
+            director: d.director || '',
+            genre: mapTmdbGenre(d.genre),
+            platform: mapTmdbPlatform(d.platform),
+            poster_url: d.poster_url || '',
+            backdrop_url: d.backdrop_url || '',
+            tmdb_id: d.tmdb_id || '',
+            release_year: d.release_year || '',
+            runtime_minutes: d.runtime_minutes || '',
+            overview: d.overview || '',
+            total_episodes: d.total_episodes || '',
+          })
+          setSearchQuery(d.title || initialSearch)
+          setTmdbSelected(true)
+        }
+      } catch {
+        // Silently fail — the user can still search manually
+      }
+    }
+    autoFill()
+  }, [])  // Run once on mount
 
   // Close dropdown on outside click
   useEffect(() => {

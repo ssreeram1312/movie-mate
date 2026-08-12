@@ -34,6 +34,7 @@ export const tmdbAPI = {
 
 export const aiAPI = {
   getRecommendations: (data) => api.post('/ai/recommendations', data),
+  getWatchPartyRecommendations: (data) => api.post('/ai/watch-party', data),
   generateReview: (data) => api.post('/ai/generate-review', data),
   estimateCompletion: (id) => api.get(`/ai/estimate-completion/${id}`),
   getStats: () => api.get('/stats/summary'),

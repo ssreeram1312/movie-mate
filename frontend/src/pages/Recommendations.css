@@ -78,14 +78,40 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-lg);
+  gap: var(--space-xl);
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
+  border-top: 4px solid var(--accent-primary);
 }
 
-.quiz-progress {
-  font-size: var(--font-sm);
+.quiz-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.quiz-progress-bar {
+  width: 100%;
+  max-width: 300px;
+  height: 6px;
+  background: var(--bg-hover);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px var(--accent-primary);
+}
+
+.quiz-progress-text {
+  font-size: var(--font-xs);
   color: var(--accent-primary);
   font-weight: 700;
   letter-spacing: 1px;
@@ -95,19 +121,34 @@
 .quiz-question {
   font-size: var(--font-2xl);
   margin: 0;
+  line-height: 1.3;
 }
 
 .quiz-options {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-md);
+  flex-direction: column;
+  gap: var(--space-sm);
   width: 100%;
+  max-width: 400px;
 }
 
 .quiz-opt-btn {
-  flex: 1 1 200px;
   padding: var(--space-md);
+  font-size: var(--font-lg);
+  font-weight: 600;
+  border: 2px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quiz-opt-btn:hover {
+  background: rgba(100, 108, 255, 0.1);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Custom Prompt Card */
@@ -116,43 +157,49 @@
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
+  border-top: 4px solid var(--accent-secondary);
+}
+
+.custom-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-sm);
+}
+
+.custom-icon {
+  color: var(--accent-secondary);
+  filter: drop-shadow(0 0 10px rgba(233, 30, 99, 0.4));
 }
 
 .recs-custom-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+  width: 100%;
 }
 
-.recs-custom-form textarea {
+.custom-textarea {
   resize: vertical;
+  min-height: 120px;
+  font-size: var(--font-lg);
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
+}
+
+.custom-textarea:focus {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.custom-submit-btn {
+  align-self: flex-end;
+  padding: 12px 24px;
 }
 
 /* Loading & Error */
-.recs-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 100px 0;
-  gap: var(--space-md);
-  color: var(--accent-primary);
-}
-
-.recs-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(100, 108, 255, 0.2);
-  border-top-color: var(--accent-primary);
-  border-radius: 50%;
-  animation: spin 1s infinite linear;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 .recs-error {
   text-align: center;
   padding: var(--space-xl);
@@ -215,9 +262,42 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   color: var(--text-muted);
+}
+
+.rec-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  background: rgba(124, 93, 250, 0.1);
+  border: 1px solid rgba(124, 93, 250, 0.3);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rec-refresh-btn:hover {
+  background: rgba(124, 93, 250, 0.2);
+  border-color: var(--accent-primary);
+  transform: scale(1.05);
+}
+
+.rec-refresh-spinning {
+  color: var(--accent-primary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .rec-platform-badge {
