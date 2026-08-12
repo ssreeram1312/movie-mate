@@ -36,6 +36,7 @@ export const aiAPI = {
   getRecommendations: () => api.get('/ai/recommendations'),
   generateReview: (data) => api.post('/ai/generate-review', data),
   estimateCompletion: (id) => api.get(`/ai/estimate-completion/${id}`),
+  getStats: () => api.get('/stats/summary'),
 }
 
 // ─── Stats API ────────────────────────────────────────────────────────────

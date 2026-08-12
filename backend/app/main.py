@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
-from app.routers import media, tmdb, ai
+from app.routers import media, tmdb, ai, stats
 
 
 @asynccontextmanager
@@ -32,6 +32,7 @@ app.add_middleware(
 app.include_router(media.router, prefix=settings.API_PREFIX)
 app.include_router(tmdb.router, prefix=settings.API_PREFIX)
 app.include_router(ai.router, prefix=settings.API_PREFIX)
+app.include_router(stats.router, prefix=settings.API_PREFIX)
 
 
 @app.get("/api/health")
