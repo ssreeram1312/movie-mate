@@ -1,0 +1,4 @@
+/* App-level styles — reset Vite defaults */
+#root {
+  min-height: 100vh;
+}

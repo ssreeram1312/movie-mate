@@ -1,0 +1,24 @@
+.placeholder-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-3xl) var(--space-xl);
+  gap: var(--space-md);
+}
+
+.placeholder-icon {
+  color: var(--text-muted);
+  opacity: 0.3;
+}
+
+.placeholder-page h2 {
+  font-size: var(--font-2xl);
+  color: var(--text-primary);
+}
+
+.placeholder-page p {
+  color: var(--text-muted);
+  max-width: 420px;
+}

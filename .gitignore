@@ -1,0 +1,22 @@
+# Task PDFs
+assets/
+
+# Python
+__pycache__/
+*.py[cod]
+*.db
+.env
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,54 @@
+/* ─── Navbar ─────────────────────────────────────────────────────────────── */
+
+.navbar {
+  height: var(--navbar-height);
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0 var(--space-xl);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.navbar-menu-btn {
+  display: none;
+  color: var(--text-secondary);
+}
+
+.navbar-title {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  /* Override h1 gradient from index.css */
+  background: none;
+  -webkit-text-fill-color: var(--text-primary);
+}
+
+.navbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* Backend status indicator */
+.navbar-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-completed);
+  box-shadow: 0 0 6px var(--status-completed);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .navbar-menu-btn {
+    display: flex;
+  }
+}
