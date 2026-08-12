@@ -6,3 +6,4 @@ python-dotenv
 httpx
 google-genai
 slowapi
+psycopg2-binary
