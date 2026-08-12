@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   MdSearch, MdClear, MdMovie, MdTv, MdArrowBack,
   MdAutoAwesome
@@ -10,6 +10,33 @@ import './AddMedia.css'
 
 const GENRES = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western']
 const PLATFORMS = ['Netflix', 'Prime Video', 'Disney+', 'Hotstar', 'Apple TV+', 'HBO Max', 'Hulu', 'YouTube Premium', 'ZEE5', 'SonyLIV', 'JioCinema', 'Mubi', 'Other']
+
+const mapTmdbGenre = (tmdbGenresStr) => {
+  if (!tmdbGenresStr) return '';
+  const first = tmdbGenresStr.split(',')[0].trim();
+  const map = { 'Science Fiction': 'Sci-Fi', 'Action & Adventure': 'Action', 'Sci-Fi & Fantasy': 'Sci-Fi' };
+  const mapped = map[first] || first;
+  if (GENRES.includes(mapped)) return mapped;
+  return GENRES.find(g => mapped.includes(g) || g.includes(mapped)) || '';
+}
+
+const mapTmdbPlatform = (platformStr) => {
+  if (!platformStr) return '';
+  const p = platformStr.toLowerCase();
+  if (p.includes('netflix')) return 'Netflix';
+  if (p.includes('amazon') || p.includes('prime')) return 'Prime Video';
+  if (p.includes('disney')) return 'Disney+';
+  if (p.includes('hotstar')) return 'Hotstar';
+  if (p.includes('apple')) return 'Apple TV+';
+  if (p.includes('hbo') || p.includes('max')) return 'HBO Max';
+  if (p.includes('hulu')) return 'Hulu';
+  if (p.includes('youtube')) return 'YouTube Premium';
+  if (p.includes('zee5')) return 'ZEE5';
+  if (p.includes('sony') || p.includes('liv')) return 'SonyLIV';
+  if (p.includes('jio')) return 'JioCinema';
+  if (p.includes('mubi')) return 'Mubi';
+  return 'Other';
+}
 
 const INITIAL_FORM = {
   title: '',
@@ -33,6 +60,9 @@ const INITIAL_FORM = {
 
 export default function AddMedia() {
   const navigate = useNavigate()
+  const { id } = useParams()
+  const isEditMode = Boolean(id)
+  
   const [form, setForm] = useState(INITIAL_FORM)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -45,6 +75,30 @@ export default function AddMedia() {
 
   const debouncedSearch = useDebounce(searchQuery, 300)
 
+  // Fetch existing data for edit mode
+  useEffect(() => {
+    if (isEditMode) {
+      mediaAPI.get(id)
+        .then(res => {
+          const d = res.data;
+          setForm({
+            ...INITIAL_FORM,
+            ...d,
+            genre: d.genre || '',
+            platform: d.platform || '',
+            total_episodes: d.total_episodes || '',
+            episodes_watched: d.episodes_watched || 0,
+            rating: d.rating || '',
+            release_year: d.release_year || '',
+            runtime_minutes: d.runtime_minutes || '',
+          });
+        })
+        .catch(err => {
+          setError('Failed to load media for editing');
+        });
+    }
+  }, [id, isEditMode]);
+
   // TMDB search
   useEffect(() => {
     if (!debouncedSearch || debouncedSearch.length < 2) {
@@ -55,9 +109,9 @@ export default function AddMedia() {
     const fetchResults = async () => {
       setSearchLoading(true)
       try {
-        const type = form.media_type === 'movie' ? 'movie' : 'tv'
-        const res = await tmdbAPI.search(debouncedSearch, type)
-        setSearchResults(res.data.results || [])
+        const res = await tmdbAPI.search(debouncedSearch, 'multi')
+        const results = (res.data.results || []).filter(r => r.media_type === 'movie' || r.media_type === 'tv')
+        setSearchResults(results)
         setShowDropdown(true)
       } catch {
         // TMDB not yet set up — search silently fails
@@ -67,7 +121,7 @@ export default function AddMedia() {
       }
     }
     fetchResults()
-  }, [debouncedSearch, form.media_type])
+  }, [debouncedSearch])
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -84,31 +138,34 @@ export default function AddMedia() {
     setShowDropdown(false)
     setSearchLoading(true)
     try {
-      const type = form.media_type === 'movie' ? 'movie' : 'tv'
+      const type = result.media_type || (form.media_type === 'movie' ? 'movie' : 'tv')
       const res = await tmdbAPI.getDetails(result.id, type)
       const d = res.data
 
-      setForm((prev) => ({
-        ...prev,
+      setForm({
+        ...INITIAL_FORM,
+        media_type: type === 'tv' ? 'tv_show' : 'movie',
         title: d.title || '',
         director: d.director || '',
-        genre: d.genre || '',
+        genre: mapTmdbGenre(d.genre),
+        platform: mapTmdbPlatform(d.platform),
         poster_url: d.poster_url || '',
         backdrop_url: d.backdrop_url || '',
         tmdb_id: d.tmdb_id || '',
         release_year: d.release_year || '',
         runtime_minutes: d.runtime_minutes || '',
         overview: d.overview || '',
-        total_episodes: d.total_episodes || prev.total_episodes,
-      }))
+        total_episodes: d.total_episodes || '',
+      })
       setSearchQuery(d.title || '')
       setTmdbSelected(true)
     } catch {
-      // Fallback: fill just the title
-      setForm((prev) => ({
-        ...prev,
+      // Fallback: reset form and fill just the title
+      setForm({
+        ...INITIAL_FORM,
+        media_type: type === 'tv' ? 'tv_show' : 'movie',
         title: result.title || result.name || '',
-      }))
+      })
       setSearchQuery(result.title || result.name || '')
       setTmdbSelected(true)
     } finally {
@@ -139,10 +196,17 @@ export default function AddMedia() {
         overview: form.overview || null,
         notes: form.notes || null,
       }
-      const res = await mediaAPI.create(payload)
+      
+      let res;
+      if (isEditMode) {
+        res = await mediaAPI.update(id, payload)
+      } else {
+        res = await mediaAPI.create(payload)
+      }
+      
       navigate(`/media/${res.data.id}`)
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to add media. Please try again.')
+      setError(err.response?.data?.detail || `Failed to ${isEditMode ? 'update' : 'add'} media. Please try again.`)
     } finally {
       setSubmitting(false)
     }
@@ -163,7 +227,7 @@ export default function AddMedia() {
           >
             <MdArrowBack size={20} />
           </button>
-          <h1 className="page-title">Add to Collection</h1>
+          <h1 className="page-title">{isEditMode ? 'Edit Media' : 'Add to Collection'}</h1>
         </div>
       </div>
 
@@ -198,7 +262,7 @@ export default function AddMedia() {
                 id="tmdb-search"
                 type="text"
                 className="input tmdb-search-input"
-                placeholder={`Search for a ${isTVShow ? 'TV show' : 'movie'}...`}
+                placeholder="Search TMDB for movies or TV shows..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -437,6 +501,20 @@ export default function AddMedia() {
             <button
               type="button"
               className="btn btn-secondary"
+              onClick={() => {
+                setForm(INITIAL_FORM);
+                setSearchQuery('');
+                setSearchResults([]);
+                setTmdbSelected(false);
+                setError(null);
+              }}
+              id="reset-btn"
+            >
+              Reset
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
               onClick={() => navigate(-1)}
               id="cancel-btn"
             >
@@ -448,7 +526,7 @@ export default function AddMedia() {
               disabled={submitting || !form.title}
               id="submit-add-btn"
             >
-              {submitting ? 'Adding...' : 'Add to Collection'}
+              {submitting ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Add to Collection')}
             </button>
           </div>
         </form>

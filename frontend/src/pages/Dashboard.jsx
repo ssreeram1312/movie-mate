@@ -85,24 +85,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Search bar */}
-      <div className="dashboard-search-wrap">
-        <MdSearch className="dashboard-search-icon" aria-hidden="true" />
-        <input
-          id="search-input"
-          type="text"
-          className="input dashboard-search"
-          placeholder="Search your collection..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label="Search collection"
-        />
-      </div>
-
-      {/* Filters */}
+      {/* Filters & Search */}
       <FilterBar
         filters={filters}
+        search={search}
         onFilterChange={handleFilterChange}
+        onSearchChange={setSearch}
         onClear={handleClearFilters}
       />
 

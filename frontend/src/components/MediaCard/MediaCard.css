@@ -7,7 +7,6 @@
   color: inherit;
   overflow: hidden;
   cursor: pointer;
-  opacity: 0;
 }
 
 .media-card:hover {

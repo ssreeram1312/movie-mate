@@ -28,27 +28,6 @@
   line-height: 1;
 }
 
-/* Search */
-.dashboard-search-wrap {
-  position: relative;
-  margin-bottom: var(--space-md);
-}
-
-.dashboard-search-icon {
-  position: absolute;
-  left: var(--space-md);
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  font-size: 1.125rem;
-  pointer-events: none;
-}
-
-.dashboard-search {
-  padding-left: 2.5rem;
-  font-size: var(--font-sm);
-}
-
 /* Empty state */
 .dashboard-empty {
   display: flex;

@@ -33,7 +33,7 @@ export const tmdbAPI = {
 // ─── AI API ───────────────────────────────────────────────────────────────
 
 export const aiAPI = {
-  getRecommendations: () => api.get('/ai/recommendations'),
+  getRecommendations: (data) => api.post('/ai/recommendations', data),
   generateReview: (data) => api.post('/ai/generate-review', data),
   estimateCompletion: (id) => api.get(`/ai/estimate-completion/${id}`),
   getStats: () => api.get('/stats/summary'),

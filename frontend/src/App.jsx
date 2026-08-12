@@ -16,6 +16,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="add" element={<AddMedia />} />
+          <Route path="edit/:id" element={<AddMedia />} />
           <Route path="media/:id" element={<MediaDetail />} />
           <Route path="stats" element={<Stats />} />
           <Route path="recommendations" element={<Recommendations />} />

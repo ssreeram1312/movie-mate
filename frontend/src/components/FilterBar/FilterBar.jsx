@@ -1,4 +1,4 @@
-import { MdFilterList, MdSwapVert, MdClose } from 'react-icons/md'
+import { MdFilterList, MdSwapVert, MdClose, MdSearch } from 'react-icons/md'
 import './FilterBar.css'
 
 const GENRES = ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Thriller', 'Romance', 'Documentary', 'Animation', 'Fantasy']
@@ -15,7 +15,7 @@ const SORT_OPTIONS = [
   { value: 'release_year', label: 'Release Year' },
 ]
 
-export default function FilterBar({ filters, onFilterChange, onClear }) {
+export default function FilterBar({ filters, search, onFilterChange, onSearchChange, onClear }) {
   const hasActiveFilters = filters.genre || filters.platform || filters.status || filters.media_type
 
   const handleChange = (key, value) => {
@@ -99,6 +99,20 @@ export default function FilterBar({ filters, onFilterChange, onClear }) {
           <option value="desc">↓ Desc</option>
           <option value="asc">↑ Asc</option>
         </select>
+      </div>
+
+      {/* Search bar */}
+      <div className="filter-bar-search">
+        <MdSearch className="filter-bar-search-icon" aria-hidden="true" />
+        <input
+          id="filter-search-input"
+          type="text"
+          className="input filter-search"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          aria-label="Search collection"
+        />
       </div>
 
       {/* Clear filters */}

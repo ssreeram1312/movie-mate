@@ -60,6 +60,18 @@ export default function MediaDetail() {
     }
   }
 
+  const handleStatusChange = async (newStatus) => {
+    setUpdating(true)
+    try {
+      const res = await mediaAPI.update(id, { status: newStatus })
+      setMedia(res.data)
+    } catch (err) {
+      alert('Failed to update status.')
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   const handleUpdateProgress = async (newEpisodes) => {
     setUpdating(true)
     try {
@@ -164,7 +176,9 @@ export default function MediaDetail() {
           <MdArrowBack size={20} />
         </button>
         <div className="detail-actions">
-          {/* We'll implement Edit form later if needed, for now just basic */}
+          <button className="btn btn-secondary btn-icon" onClick={() => navigate(`/edit/${id}`)} title="Edit Media">
+            <MdEdit size={20} />
+          </button>
           <button className="btn btn-danger btn-icon" onClick={handleDelete} disabled={deleting} title="Delete">
             <MdDelete size={20} />
           </button>
@@ -183,9 +197,19 @@ export default function MediaDetail() {
                 <span>No Poster Available</span>
               </div>
             )}
-            <div className={`badge detail-status-badge ${status.className}`}>
-              <StatusIcon size={12} />
-              {status.label}
+            <div className={`badge detail-status-badge ${status.className} interactive-badge`}>
+              <StatusIcon size={14} />
+              <select
+                className="status-select-dropdown"
+                value={media.status}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                disabled={updating}
+                title="Change status"
+              >
+                <option value="wishlist">Wishlist</option>
+                <option value="watching">Watching</option>
+                <option value="completed">Completed</option>
+              </select>
             </div>
           </div>
         </div>
